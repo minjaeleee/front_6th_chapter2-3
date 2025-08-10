@@ -31,9 +31,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  Textarea,
 } from '../components';
-import { Button, Input } from '../shared';
+import { Button, Input, Textarea } from '../shared';
 import { useCommentsStore } from '../stores';
 import { usePostsStore } from '../stores/posts';
 import { useSearchStore } from '../stores/search';
