@@ -5,24 +5,7 @@ import { Check, ChevronDown, X } from 'lucide-react';
 import * as React from 'react';
 import { forwardRef } from 'react';
 
-// Button은 shared에서 import
-export { Button } from '../shared';
-
-// 입력 컴포넌트
-export const Input = forwardRef<
-  HTMLInputElement,
-  React.InputHTMLAttributes<HTMLInputElement>
->(({ className, type, ...props }, ref) => {
-  return (
-    <input
-      type={type}
-      className={`border-input ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border bg-white px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
-      ref={ref}
-      {...props}
-    />
-  );
-});
-Input.displayName = 'Input';
+export { Button, Input } from '../shared';
 
 // 카드 컴포넌트
 export const Card = forwardRef<

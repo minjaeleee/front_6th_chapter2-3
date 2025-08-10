@@ -12,7 +12,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import React, { useEffect } from 'react';
 
 import {
-  Button,
   Card,
   CardContent,
   CardHeader,
@@ -21,7 +20,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  Input,
   Select,
   SelectContent,
   SelectItem,
@@ -35,6 +33,7 @@ import {
   TableRow,
   Textarea,
 } from '../components';
+import { Button, Input } from '../shared';
 import { useCommentsStore } from '../stores';
 import { usePostsStore } from '../stores/posts';
 import { useSearchStore } from '../stores/search';
