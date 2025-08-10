@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -37,14 +37,8 @@ import {
 } from '../components';
 import { useCommentsStore } from '../stores';
 import { usePostsStore } from '../stores/posts';
-import {
-  Comment,
-  CreatePost,
-  Post,
-  Tag,
-  UpdatePost,
-  User,
-} from '../stores/types';
+import { useSearchStore } from '../stores/search';
+import { Comment, CreatePost, Post, UpdatePost, User } from '../stores/types';
 
 const PostsManager = () => {
   const navigate = useNavigate();
@@ -76,15 +70,21 @@ const PostsManager = () => {
     setLimit,
   } = usePostsStore();
 
+  const {
+    searchQuery,
+    sortBy,
+    sortOrder,
+    selectedTag,
+    tags,
+    setSearchQuery,
+    setSortBy,
+    setSortOrder,
+    setSelectedTag,
+    fetchTags,
+  } = useSearchStore();
+
   // 상태 관리
-  const [searchQuery, setSearchQuery] = useState(
-    queryParams.get('search') || ''
-  );
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [sortBy, setSortBy] = useState(queryParams.get('sortBy') || '');
-  const [sortOrder, setSortOrder] = useState(
-    queryParams.get('sortOrder') || 'asc'
-  );
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [newPost, setNewPost] = useState<CreatePost>({
@@ -92,12 +92,10 @@ const PostsManager = () => {
     body: '',
     userId: 1,
   });
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [selectedTag, setSelectedTag] = useState(queryParams.get('tag') || '');
   const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
   const [newComment, setNewComment] = useState({
     body: '',
-    postId: null,
+    postId: null as number | null,
     userId: 1,
   });
   const [showAddCommentDialog, setShowAddCommentDialog] = useState(false);
@@ -116,17 +114,6 @@ const PostsManager = () => {
     if (sortOrder) params.set('sortOrder', sortOrder);
     if (selectedTag) params.set('tag', selectedTag);
     navigate(`?${params.toString()}`);
-  };
-
-  // 태그 가져오기
-  const fetchTags = async () => {
-    try {
-      const response = await fetch('/api/posts/tags');
-      const data = await response.json();
-      setTags(data);
-    } catch (error) {
-      console.error('태그 가져오기 오류:', error);
-    }
   };
 
   // 게시물 추가
@@ -633,11 +620,11 @@ const PostsManager = () => {
         <DialogContent className='max-w-3xl'>
           <DialogHeader>
             <DialogTitle>
-              {highlightText(selectedPost?.title, searchQuery)}
+              {highlightText(selectedPost?.title || '', searchQuery)}
             </DialogTitle>
           </DialogHeader>
           <div className='space-y-4'>
-            <p>{highlightText(selectedPost?.body, searchQuery)}</p>
+            <p>{highlightText(selectedPost?.body || '', searchQuery)}</p>
             {selectedPost && renderComments(selectedPost.id)}
           </div>
         </DialogContent>
