@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Button,
@@ -40,6 +40,7 @@ import { usePostsStore } from '../stores/posts';
 import { useSearchStore } from '../stores/search';
 import { Comment, Post, UpdatePost, User } from '../stores/types';
 import { useUIStore } from '../stores/ui';
+import { useUsersStore } from '../stores/users';
 
 const PostsManager = () => {
   const navigate = useNavigate();
@@ -109,8 +110,7 @@ const PostsManager = () => {
     resetNewComment,
   } = useUIStore();
 
-  // 상태 관리 - UI 관련 상태들은 useUIStore에서 가져옴
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const { selectedUser, fetchUser, setSelectedUser } = useUsersStore();
 
   // URL 업데이트 함수
   const updateURL = () => {
@@ -152,14 +152,8 @@ const PostsManager = () => {
 
   // 사용자 모달 열기
   const openUserModal = async (user: User) => {
-    try {
-      const response = await fetch(`/api/users/${user.id}`);
-      const userData = await response.json();
-      setSelectedUser(userData);
-      setShowUserModal(true);
-    } catch (error) {
-      console.error('사용자 정보 가져오기 오류:', error);
-    }
+    await fetchUser(user.id);
+    setShowUserModal(true);
   };
 
   useEffect(() => {
