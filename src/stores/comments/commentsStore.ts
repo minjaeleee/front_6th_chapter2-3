@@ -7,7 +7,6 @@ interface CommentsState {
   loading: boolean;
   error: string | null;
 
-  // Actions
   fetchComments: (postId: number) => Promise<void>;
   addComment: (comment: CreateComment) => Promise<void>;
   updateComment: (id: number, comment: UpdateComment) => Promise<void>;
