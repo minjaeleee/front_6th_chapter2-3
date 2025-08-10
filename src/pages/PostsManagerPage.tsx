@@ -16,12 +16,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from '../components';
 import {
   Button,
@@ -35,6 +29,12 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Textarea,
 } from '../shared';
 import { useCommentsStore } from '../stores';
