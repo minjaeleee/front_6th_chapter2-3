@@ -20,11 +20,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Table,
   TableBody,
   TableCell,
@@ -32,7 +27,16 @@ import {
   TableHeader,
   TableRow,
 } from '../components';
-import { Button, Input, Textarea } from '../shared';
+import {
+  Button,
+  Input,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Textarea,
+} from '../shared';
 import { useCommentsStore } from '../stores';
 import { usePostsStore } from '../stores/posts';
 import { useSearchStore } from '../stores/search';
