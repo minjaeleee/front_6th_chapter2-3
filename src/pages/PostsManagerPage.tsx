@@ -38,7 +38,8 @@ import {
 import { useCommentsStore } from '../stores';
 import { usePostsStore } from '../stores/posts';
 import { useSearchStore } from '../stores/search';
-import { Comment, CreatePost, Post, UpdatePost, User } from '../stores/types';
+import { Comment, Post, UpdatePost, User } from '../stores/types';
+import { useUIStore } from '../stores/ui';
 
 const PostsManager = () => {
   const navigate = useNavigate();
@@ -83,25 +84,32 @@ const PostsManager = () => {
     fetchTags,
   } = useSearchStore();
 
-  // 상태 관리
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [showEditDialog, setShowEditDialog] = useState(false);
-  const [newPost, setNewPost] = useState<CreatePost>({
-    title: '',
-    body: '',
-    userId: 1,
-  });
-  const [selectedComment, setSelectedComment] = useState<Comment | null>(null);
-  const [newComment, setNewComment] = useState({
-    body: '',
-    postId: null as number | null,
-    userId: 1,
-  });
-  const [showAddCommentDialog, setShowAddCommentDialog] = useState(false);
-  const [showEditCommentDialog, setShowEditCommentDialog] = useState(false);
-  const [showPostDetailDialog, setShowPostDetailDialog] = useState(false);
-  const [showUserModal, setShowUserModal] = useState(false);
+  const {
+    showAddDialog,
+    showEditDialog,
+    showAddCommentDialog,
+    showEditCommentDialog,
+    showPostDetailDialog,
+    showUserModal,
+    newPost,
+    newComment,
+    selectedPost,
+    selectedComment,
+    setShowAddDialog,
+    setShowEditDialog,
+    setShowAddCommentDialog,
+    setShowEditCommentDialog,
+    setShowPostDetailDialog,
+    setShowUserModal,
+    setNewPost,
+    setNewComment,
+    setSelectedPost,
+    setSelectedComment,
+    resetNewPost,
+    resetNewComment,
+  } = useUIStore();
+
+  // 상태 관리 - UI 관련 상태들은 useUIStore에서 가져옴
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   // URL 업데이트 함수
@@ -120,7 +128,7 @@ const PostsManager = () => {
   const handleAddPost = async () => {
     await addPost(newPost);
     setShowAddDialog(false);
-    setNewPost({ title: '', body: '', userId: 1 });
+    resetNewPost();
   };
 
   // 게시물 업데이트
@@ -303,7 +311,7 @@ const PostsManager = () => {
         <Button
           size='sm'
           onClick={() => {
-            setNewComment(prev => ({ ...prev, postId }));
+            setNewComment({ ...newComment, postId });
             setShowAddCommentDialog(true);
           }}
         >
@@ -566,7 +574,7 @@ const PostsManager = () => {
               onClick={async () => {
                 await addComment(newComment);
                 setShowAddCommentDialog(false);
-                setNewComment({ body: '', postId: null, userId: 1 });
+                resetNewComment();
               }}
             >
               댓글 추가
