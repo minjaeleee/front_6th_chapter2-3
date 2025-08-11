@@ -1,44 +1,24 @@
-import {
-  Edit2,
-  MessageSquare,
-  Plus,
-  Search,
-  ThumbsDown,
-  ThumbsUp,
-  Trash2,
-} from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import React, { useEffect } from 'react';
 
-import { CommentForm, CommentList } from '../entities/comment';
-import { Post, UpdatePost } from '../entities/post';
-import { User, UserAvatar, UserModal } from '../entities/user';
+import { CommentForm } from '../entities/comment';
+import { Post, PostDetail, PostForm, PostTable } from '../entities/post';
+import { User, UserModal } from '../entities/user';
 import {
   Button,
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
   Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  Textarea,
 } from '../shared';
-import { highlightText } from '../shared/lib';
 import { useCommentsStore } from '../stores';
 import { usePostsStore } from '../stores/posts';
 import { useSearchStore } from '../stores/search';
@@ -50,25 +30,14 @@ const PostsManager = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
 
-  const {
-    comments,
-    fetchComments,
-    addComment,
-    updateComment,
-    deleteComment,
-    likeComment,
-  } = useCommentsStore();
+  const { fetchComments } = useCommentsStore();
 
   const {
-    posts,
     total,
     loading,
     skip,
     limit,
     fetchPosts,
-    addPost,
-    updatePost,
-    deletePost,
     searchPosts,
     fetchPostsByTag,
     setSkip,
@@ -93,27 +62,17 @@ const PostsManager = () => {
     showEditDialog,
     showAddCommentDialog,
     showEditCommentDialog,
-    showPostDetailDialog,
     showUserModal,
-    newPost,
-    newComment,
-    selectedPost,
-    selectedComment,
     setShowAddDialog,
     setShowEditDialog,
     setShowAddCommentDialog,
     setShowEditCommentDialog,
-    setShowPostDetailDialog,
     setShowUserModal,
-    setNewPost,
-    setNewComment,
     setSelectedPost,
-    setSelectedComment,
-    resetNewPost,
-    resetNewComment,
+    setShowPostDetailDialog,
   } = useUIStore();
 
-  const { fetchUser } = useUsersStore();
+  const { selectedUser, fetchUser, setSelectedUser } = useUsersStore();
 
   // URL 업데이트 함수
   const updateURL = () => {
@@ -125,25 +84,6 @@ const PostsManager = () => {
     if (sortOrder) params.set('sortOrder', sortOrder);
     if (selectedTag) params.set('tag', selectedTag);
     navigate(`?${params.toString()}`);
-  };
-
-  // 게시물 추가
-  const handleAddPost = async () => {
-    await addPost(newPost);
-    setShowAddDialog(false);
-    resetNewPost();
-  };
-
-  // 게시물 업데이트
-  const handleUpdatePost = async () => {
-    if (selectedPost) {
-      const updateData: UpdatePost = {
-        title: selectedPost.title,
-        body: selectedPost.body,
-      };
-      await updatePost(selectedPost.id, updateData);
-      setShowEditDialog(false);
-    }
   };
 
   // 게시물 상세 보기
@@ -183,97 +123,6 @@ const PostsManager = () => {
     setSortOrder(params.get('sortOrder') || 'asc');
     setSelectedTag(params.get('tag') || '');
   }, [location.search]);
-
-  // 게시물 테이블 렌더링
-  const renderPostTable = () => (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className='w-[50px]'>ID</TableHead>
-          <TableHead>제목</TableHead>
-          <TableHead className='w-[150px]'>작성자</TableHead>
-          <TableHead className='w-[150px]'>반응</TableHead>
-          <TableHead className='w-[150px]'>작업</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {posts.map(post => (
-          <TableRow key={post.id}>
-            <TableCell>{post.id}</TableCell>
-            <TableCell>
-              <div className='space-y-1'>
-                <div>{highlightText(post.title, searchQuery)}</div>
-
-                <div className='flex flex-wrap gap-1'>
-                  {post.tags?.map(tag => (
-                    <span
-                      key={tag}
-                      className={`cursor-pointer rounded-[4px] px-1 text-[9px] font-semibold ${
-                        selectedTag === tag
-                          ? 'bg-blue-500 text-white hover:bg-blue-600'
-                          : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-                      }`}
-                      onClick={() => {
-                        setSelectedTag(tag);
-                        updateURL();
-                      }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>
-              {post.author && (
-                <UserAvatar
-                  user={post.author}
-                  size='md'
-                  onClick={openUserModal}
-                />
-              )}
-            </TableCell>
-            <TableCell>
-              <div className='flex items-center gap-2'>
-                <ThumbsUp className='h-4 w-4' />
-                <span>{post.reactions?.likes || 0}</span>
-                <ThumbsDown className='h-4 w-4' />
-                <span>{post.reactions?.dislikes || 0}</span>
-              </div>
-            </TableCell>
-            <TableCell>
-              <div className='flex items-center gap-2'>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  onClick={() => openPostDetail(post)}
-                >
-                  <MessageSquare className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  onClick={() => {
-                    setSelectedPost(post);
-                    setShowEditDialog(true);
-                  }}
-                >
-                  <Edit2 className='h-4 w-4' />
-                </Button>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  onClick={() => deletePost(post.id)}
-                >
-                  <Trash2 className='h-4 w-4' />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
 
   return (
     <Card className='mx-auto w-full max-w-6xl'>
@@ -352,7 +201,10 @@ const PostsManager = () => {
           {loading ? (
             <div className='flex justify-center p-4'>로딩 중...</div>
           ) : (
-            renderPostTable()
+            <PostTable
+              onOpenPostDetail={openPostDetail}
+              onOpenUserModal={openUserModal}
+            />
           )}
 
           {/* 페이지네이션 */}
@@ -392,75 +244,17 @@ const PostsManager = () => {
         </div>
       </CardContent>
 
-      {/* 게시물 추가 대화상자 */}
-      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>새 게시물 추가</DialogTitle>
-          </DialogHeader>
-          <div className='space-y-4'>
-            <Input
-              placeholder='제목'
-              value={newPost.title}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setNewPost({ ...newPost, title: e.target.value })
-              }
-            />
-            <Textarea
-              rows={30}
-              placeholder='내용'
-              value={newPost.body}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setNewPost({ ...newPost, body: e.target.value })
-              }
-            />
-            <Input
-              type='number'
-              placeholder='사용자 ID'
-              value={newPost.userId}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setNewPost({ ...newPost, userId: Number(e.target.value) })
-              }
-            />
-            <Button onClick={handleAddPost}>게시물 추가</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* 게시물 수정 대화상자 */}
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>게시물 수정</DialogTitle>
-          </DialogHeader>
-          <div className='space-y-4'>
-            <Input
-              placeholder='제목'
-              value={selectedPost?.title || ''}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setSelectedPost(
-                  selectedPost
-                    ? { ...selectedPost, title: e.target.value }
-                    : null
-                )
-              }
-            />
-            <Textarea
-              rows={30}
-              placeholder='내용'
-              value={selectedPost?.body || ''}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setSelectedPost(
-                  selectedPost
-                    ? { ...selectedPost, body: e.target.value }
-                    : null
-                )
-              }
-            />
-            <Button onClick={handleUpdatePost}>게시물 업데이트</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* 게시물 추가/수정 폼 */}
+      <PostForm
+        isOpen={showAddDialog}
+        onOpenChange={setShowAddDialog}
+        mode='add'
+      />
+      <PostForm
+        isOpen={showEditDialog}
+        onOpenChange={setShowEditDialog}
+        mode='edit'
+      />
 
       {/* 댓글 추가 대화상자 */}
       <CommentForm
@@ -478,23 +272,8 @@ const PostsManager = () => {
         submitText='댓글 업데이트'
       />
 
-      {/* 게시물 상세 보기 대화상자 */}
-      <Dialog
-        open={showPostDetailDialog}
-        onOpenChange={setShowPostDetailDialog}
-      >
-        <DialogContent className='max-w-3xl'>
-          <DialogHeader>
-            <DialogTitle>
-              {highlightText(selectedPost?.title || '', searchQuery)}
-            </DialogTitle>
-          </DialogHeader>
-          <div className='space-y-4'>
-            <p>{highlightText(selectedPost?.body || '', searchQuery)}</p>
-            {selectedPost && <CommentList />}
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* 게시물 상세 보기 */}
+      <PostDetail />
 
       {/* 사용자 모달 */}
       <UserModal />
