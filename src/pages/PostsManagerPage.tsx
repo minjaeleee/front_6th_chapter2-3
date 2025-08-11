@@ -13,7 +13,7 @@ import React, { useEffect } from 'react';
 
 import { CommentForm, CommentList } from '../entities/comment';
 import { Post, UpdatePost } from '../entities/post';
-import { User } from '../entities/user';
+import { User, UserAvatar, UserModal } from '../entities/user';
 import {
   Button,
   Card,
@@ -113,7 +113,7 @@ const PostsManager = () => {
     resetNewComment,
   } = useUIStore();
 
-  const { selectedUser, fetchUser, setSelectedUser } = useUsersStore();
+  const { fetchUser } = useUsersStore();
 
   // URL 업데이트 함수
   const updateURL = () => {
@@ -225,17 +225,13 @@ const PostsManager = () => {
               </div>
             </TableCell>
             <TableCell>
-              <div
-                className='flex cursor-pointer items-center space-x-2'
-                onClick={() => post.author && openUserModal(post.author)}
-              >
-                <img
-                  src={post.author?.image}
-                  alt={post.author?.username}
-                  className='h-8 w-8 rounded-full'
+              {post.author && (
+                <UserAvatar
+                  user={post.author}
+                  size='md'
+                  onClick={openUserModal}
                 />
-                <span>{post.author?.username}</span>
-              </div>
+              )}
             </TableCell>
             <TableCell>
               <div className='flex items-center gap-2'>
@@ -501,46 +497,7 @@ const PostsManager = () => {
       </Dialog>
 
       {/* 사용자 모달 */}
-      <Dialog open={showUserModal} onOpenChange={setShowUserModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>사용자 정보</DialogTitle>
-          </DialogHeader>
-          <div className='space-y-4'>
-            <img
-              src={selectedUser?.image}
-              alt={selectedUser?.username}
-              className='mx-auto h-24 w-24 rounded-full'
-            />
-            <h3 className='text-center text-xl font-semibold'>
-              {selectedUser?.username}
-            </h3>
-            <div className='space-y-2'>
-              <p>
-                <strong>이름:</strong> {selectedUser?.firstName}{' '}
-                {selectedUser?.lastName}
-              </p>
-              <p>
-                <strong>나이:</strong> {selectedUser?.age}
-              </p>
-              <p>
-                <strong>이메일:</strong> {selectedUser?.email}
-              </p>
-              <p>
-                <strong>전화번호:</strong> {selectedUser?.phone}
-              </p>
-              <p>
-                <strong>주소:</strong> {selectedUser?.address?.address},{' '}
-                {selectedUser?.address?.city}, {selectedUser?.address?.state}
-              </p>
-              <p>
-                <strong>직장:</strong> {selectedUser?.company?.name} -{' '}
-                {selectedUser?.company?.title}
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <UserModal />
     </Card>
   );
 };
