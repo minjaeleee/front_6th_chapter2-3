@@ -11,7 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import React, { useEffect } from 'react';
 
-import { Comment } from '../entities/comment';
+import { CommentForm, CommentList } from '../entities/comment';
 import { Post, UpdatePost } from '../entities/post';
 import { User } from '../entities/user';
 import {
@@ -279,69 +279,6 @@ const PostsManager = () => {
     </Table>
   );
 
-  // 댓글 렌더링
-  const renderComments = (postId: number) => (
-    <div className='mt-2'>
-      <div className='mb-2 flex items-center justify-between'>
-        <h3 className='text-sm font-semibold'>댓글</h3>
-        <Button
-          size='sm'
-          onClick={() => {
-            setNewComment({ ...newComment, postId });
-            setShowAddCommentDialog(true);
-          }}
-        >
-          <Plus className='mr-1 h-3 w-3' />
-          댓글 추가
-        </Button>
-      </div>
-      <div className='space-y-1'>
-        {comments[postId]?.map((comment: Comment) => (
-          <div
-            key={comment.id}
-            className='flex items-center justify-between border-b pb-1 text-sm'
-          >
-            <div className='flex items-center space-x-2 overflow-hidden'>
-              <span className='truncate font-medium'>
-                {comment.user.username}:
-              </span>
-              <span className='truncate'>
-                {highlightText(comment.body, searchQuery)}
-              </span>
-            </div>
-            <div className='flex items-center space-x-1'>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => likeComment(comment.id, postId)}
-              >
-                <ThumbsUp className='h-3 w-3' />
-                <span className='ml-1 text-xs'>{comment.likes}</span>
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => {
-                  setSelectedComment(comment);
-                  setShowEditCommentDialog(true);
-                }}
-              >
-                <Edit2 className='h-3 w-3' />
-              </Button>
-              <Button
-                variant='ghost'
-                size='sm'
-                onClick={() => deleteComment(comment.id, postId)}
-              >
-                <Trash2 className='h-3 w-3' />
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
   return (
     <Card className='mx-auto w-full max-w-6xl'>
       <CardHeader>
@@ -513,7 +450,7 @@ const PostsManager = () => {
               }
             />
             <Textarea
-              rows={15}
+              rows={30}
               placeholder='내용'
               value={selectedPost?.body || ''}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -530,71 +467,20 @@ const PostsManager = () => {
       </Dialog>
 
       {/* 댓글 추가 대화상자 */}
-      <Dialog
-        open={showAddCommentDialog}
+      <CommentForm
+        isOpen={showAddCommentDialog}
         onOpenChange={setShowAddCommentDialog}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>새 댓글 추가</DialogTitle>
-          </DialogHeader>
-          <div className='space-y-4'>
-            <Textarea
-              placeholder='댓글 내용'
-              value={newComment.body}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setNewComment({ ...newComment, body: e.target.value })
-              }
-            />
-            <Button
-              onClick={async () => {
-                await addComment(newComment);
-                setShowAddCommentDialog(false);
-                resetNewComment();
-              }}
-            >
-              댓글 추가
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        title='새 댓글 추가'
+        submitText='댓글 추가'
+      />
 
       {/* 댓글 수정 대화상자 */}
-      <Dialog
-        open={showEditCommentDialog}
+      <CommentForm
+        isOpen={showEditCommentDialog}
         onOpenChange={setShowEditCommentDialog}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>댓글 수정</DialogTitle>
-          </DialogHeader>
-          <div className='space-y-4'>
-            <Textarea
-              placeholder='댓글 내용'
-              value={selectedComment?.body || ''}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setSelectedComment(
-                  selectedComment
-                    ? { ...selectedComment, body: e.target.value }
-                    : null
-                )
-              }
-            />
-            <Button
-              onClick={async () => {
-                if (selectedComment) {
-                  await updateComment(selectedComment.id, {
-                    body: selectedComment.body,
-                  });
-                  setShowEditCommentDialog(false);
-                }
-              }}
-            >
-              댓글 업데이트
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        title='댓글 수정'
+        submitText='댓글 업데이트'
+      />
 
       {/* 게시물 상세 보기 대화상자 */}
       <Dialog
@@ -609,7 +495,7 @@ const PostsManager = () => {
           </DialogHeader>
           <div className='space-y-4'>
             <p>{highlightText(selectedPost?.body || '', searchQuery)}</p>
-            {selectedPost && renderComments(selectedPost.id)}
+            {selectedPost && <CommentList />}
           </div>
         </DialogContent>
       </Dialog>
