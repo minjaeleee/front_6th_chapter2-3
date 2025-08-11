@@ -1,5 +1,3 @@
-// 공통 타입 정의
-
 export interface Post {
   id: number;
   title: string;
@@ -10,12 +8,7 @@ export interface Post {
     likes: number;
     dislikes: number;
   };
-  author?: any; // User 타입은 entities/user에서 import
-}
-
-export interface Tag {
-  url: string;
-  slug: string;
+  author?: any;
 }
 
 export interface CreatePost {
@@ -29,11 +22,7 @@ export interface UpdatePost {
   body: string;
 }
 
-export interface SearchFilters {
-  skip: number;
-  limit: number;
-  searchQuery: string;
-  sortBy: string;
-  sortOrder: string;
-  selectedTag: string;
+export interface Tag {
+  url: string;
+  slug: string;
 }

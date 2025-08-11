@@ -1,6 +1,6 @@
 import { Comment, CreateComment, UpdateComment } from '../../entities/comment';
+import { Post, UpdatePost } from '../../entities/post';
 import { User } from '../../entities/user';
-import { Post, UpdatePost } from '../../stores/types';
 import { API_ENDPOINTS } from './endpoints';
 import { apiClient } from './httpClient';
 

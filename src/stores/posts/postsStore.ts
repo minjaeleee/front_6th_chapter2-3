@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { CreatePost, Post, UpdatePost } from '../types';
+import { CreatePost, Post, UpdatePost } from '../../entities/post';
 
 interface PostsState {
   posts: Post[];

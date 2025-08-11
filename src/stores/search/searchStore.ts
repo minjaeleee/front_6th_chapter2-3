@@ -1,6 +1,15 @@
 import { create } from 'zustand';
 
-import { Tag } from '../types';
+import { Tag } from '../../entities/post';
+
+export interface SearchFilters {
+  skip: number;
+  limit: number;
+  searchQuery: string;
+  sortBy: string;
+  sortOrder: string;
+  selectedTag: string;
+}
 
 interface SearchState {
   searchQuery: string;
