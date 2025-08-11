@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { User } from '../types';
+import { User } from '../../entities/user';
 
 interface UsersState {
   selectedUser: User | null;

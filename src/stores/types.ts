@@ -1,23 +1,4 @@
 // 공통 타입 정의
-export interface User {
-  id: number;
-  username: string;
-  firstName: string;
-  lastName: string;
-  age: number;
-  email: string;
-  phone: string;
-  image: string;
-  address: {
-    address: string;
-    city: string;
-    state: string;
-  };
-  company: {
-    name: string;
-    title: string;
-  };
-}
 
 export interface Post {
   id: number;
@@ -29,7 +10,7 @@ export interface Post {
     likes: number;
     dislikes: number;
   };
-  author?: User;
+  author?: any; // User 타입은 entities/user에서 import
 }
 
 export interface Tag {
