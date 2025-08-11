@@ -24,13 +24,9 @@ import { Post } from '../model';
 
 interface PostTableProps {
   onOpenPostDetail: (post: Post) => void;
-  onOpenUserModal: (user: any) => void;
 }
 
-const PostTable: React.FC<PostTableProps> = ({
-  onOpenPostDetail,
-  onOpenUserModal,
-}) => {
+const PostTable: React.FC<PostTableProps> = ({ onOpenPostDetail }) => {
   const { posts, deletePost } = usePostsStore();
   const { setSelectedPost, setShowEditDialog } = useUIStore();
   const { searchQuery, selectedTag, setSelectedTag } = useSearchStore();
@@ -80,13 +76,7 @@ const PostTable: React.FC<PostTableProps> = ({
               </div>
             </TableCell>
             <TableCell>
-              {post.author && (
-                <UserAvatar
-                  user={post.author}
-                  size='md'
-                  onClick={onOpenUserModal}
-                />
-              )}
+              {post.author && <UserAvatar user={post.author} size='md' />}
             </TableCell>
             <TableCell>
               <div className='flex items-center gap-2'>

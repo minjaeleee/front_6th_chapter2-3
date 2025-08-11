@@ -6,11 +6,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../../shared/ui';
-import { useUIStore, useUsersStore } from '../../../stores';
+import { useUserProfileStore } from '../../../stores/user-profile';
 
 const UserModal: React.FC = () => {
-  const { showUserModal, setShowUserModal } = useUIStore();
-  const { selectedUser } = useUsersStore();
+  const { showUserModal, setShowUserModal, selectedUser } =
+    useUserProfileStore();
 
   return (
     <Dialog open={showUserModal} onOpenChange={setShowUserModal}>

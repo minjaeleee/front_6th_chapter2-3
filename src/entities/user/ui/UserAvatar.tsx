@@ -1,20 +1,21 @@
 import React from 'react';
 
+import { useUserProfileStore } from '../../../stores/user-profile';
 import { User } from '../model';
 
 interface UserAvatarProps {
   user: User;
   size?: 'sm' | 'md' | 'lg';
   showUsername?: boolean;
-  onClick?: (user: User) => void;
 }
 
 const UserAvatar: React.FC<UserAvatarProps> = ({
   user,
   size = 'md',
   showUsername = true,
-  onClick,
 }) => {
+  const { openUserProfile } = useUserProfileStore();
+
   const sizeClasses = {
     sm: 'h-6 w-6',
     md: 'h-8 w-8',
@@ -22,9 +23,7 @@ const UserAvatar: React.FC<UserAvatarProps> = ({
   };
 
   const handleClick = () => {
-    if (onClick) {
-      onClick(user);
-    }
+    openUserProfile(user);
   };
 
   return (

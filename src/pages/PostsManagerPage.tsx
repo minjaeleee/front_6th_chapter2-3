@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 
 import { CommentForm } from '../entities/comment';
 import { Post, PostDetail, PostForm, PostTable } from '../entities/post';
-import { User, UserModal } from '../entities/user';
+import { UserModal } from '../entities/user';
 import {
   Button,
   Card,
@@ -23,12 +23,11 @@ import { useCommentsStore } from '../stores';
 import { usePostsStore } from '../stores/posts';
 import { useSearchStore } from '../stores/search';
 import { useUIStore } from '../stores/ui';
-import { useUsersStore } from '../stores/users';
+import { useUserProfileStore } from '../stores/user-profile';
 
 const PostsManager = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
 
   const { fetchComments } = useCommentsStore();
 
@@ -62,17 +61,15 @@ const PostsManager = () => {
     showEditDialog,
     showAddCommentDialog,
     showEditCommentDialog,
-    showUserModal,
     setShowAddDialog,
     setShowEditDialog,
     setShowAddCommentDialog,
     setShowEditCommentDialog,
-    setShowUserModal,
     setSelectedPost,
     setShowPostDetailDialog,
   } = useUIStore();
 
-  const { selectedUser, fetchUser, setSelectedUser } = useUsersStore();
+  const { openUserProfile } = useUserProfileStore();
 
   // URL 업데이트 함수
   const updateURL = () => {
@@ -91,12 +88,6 @@ const PostsManager = () => {
     setSelectedPost(post);
     fetchComments(post.id);
     setShowPostDetailDialog(true);
-  };
-
-  // 사용자 모달 열기
-  const openUserModal = async (user: User) => {
-    await fetchUser(user.id);
-    setShowUserModal(true);
   };
 
   useEffect(() => {
@@ -201,10 +192,7 @@ const PostsManager = () => {
           {loading ? (
             <div className='flex justify-center p-4'>로딩 중...</div>
           ) : (
-            <PostTable
-              onOpenPostDetail={openPostDetail}
-              onOpenUserModal={openUserModal}
-            />
+            <PostTable onOpenPostDetail={openPostDetail} />
           )}
 
           {/* 페이지네이션 */}
