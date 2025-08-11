@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { Comment, CreateComment, UpdateComment } from '../types';
+import { Comment, CreateComment, UpdateComment } from '../../entities/comment';
 
 interface CommentsState {
   comments: Record<number, Comment[]>;

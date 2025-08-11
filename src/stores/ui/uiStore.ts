@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
-import { CreateComment, CreatePost } from '../types';
+import { CreateComment } from '../../entities/comment';
+import { CreatePost } from '../types';
 
 interface UIState {
   // Dialog states

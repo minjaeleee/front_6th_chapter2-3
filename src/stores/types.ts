@@ -32,17 +32,6 @@ export interface Post {
   author?: User;
 }
 
-export interface Comment {
-  id: number;
-  body: string;
-  postId: number;
-  userId: number;
-  likes: number;
-  user: {
-    username: string;
-  };
-}
-
 export interface Tag {
   url: string;
   slug: string;
@@ -56,16 +45,6 @@ export interface CreatePost {
 
 export interface UpdatePost {
   title: string;
-  body: string;
-}
-
-export interface CreateComment {
-  body: string;
-  postId: number | null;
-  userId: number;
-}
-
-export interface UpdateComment {
   body: string;
 }
 

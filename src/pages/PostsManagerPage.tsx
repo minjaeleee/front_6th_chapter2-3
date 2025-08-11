@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import React, { useEffect } from 'react';
 
+import { Comment } from '../entities/comment';
 import {
   Button,
   Card,
@@ -39,7 +40,7 @@ import { highlightText } from '../shared/lib';
 import { useCommentsStore } from '../stores';
 import { usePostsStore } from '../stores/posts';
 import { useSearchStore } from '../stores/search';
-import { Comment, Post, UpdatePost, User } from '../stores/types';
+import { Post, UpdatePost, User } from '../stores/types';
 import { useUIStore } from '../stores/ui';
 import { useUsersStore } from '../stores/users';
 
