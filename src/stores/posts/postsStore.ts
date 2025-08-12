@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { CreatePost, Post, UpdatePost } from '../../entities/post';
+import { CreatePost, Post, UpdatePost, postApi } from '../../entities/post';
 
 interface PostsState {
   posts: Post[];
@@ -39,10 +39,8 @@ export const usePostsStore = create<PostsState>((set, get) => ({
       let postsData;
       let usersData;
 
-      const postsResponse = await fetch(
-        `/api/posts?limit=${limit}&skip=${skip}`
-      );
-      postsData = await postsResponse.json();
+      const postsResponse = await postApi.getPosts(limit, skip);
+      postsData = postsResponse;
 
       const usersResponse = await fetch(
         '/api/users?limit=0&select=username,image'
@@ -63,12 +61,7 @@ export const usePostsStore = create<PostsState>((set, get) => ({
 
   addPost: async (post: CreatePost) => {
     try {
-      const response = await fetch('/api/posts/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(post),
-      });
-      const data = await response.json();
+      const data = await postApi.addPost(post);
       const { posts } = get();
       set({ posts: [data, ...posts] });
     } catch (error: any) {
@@ -79,12 +72,7 @@ export const usePostsStore = create<PostsState>((set, get) => ({
 
   updatePost: async (id: number, post: UpdatePost) => {
     try {
-      const response = await fetch(`/api/posts/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(post),
-      });
-      const data = await response.json();
+      const data = await postApi.updatePost(id, post);
       const { posts } = get();
       set({
         posts: posts.map(p => (p.id === data.id ? data : p)),
@@ -97,9 +85,7 @@ export const usePostsStore = create<PostsState>((set, get) => ({
 
   deletePost: async (id: number) => {
     try {
-      await fetch(`/api/posts/${id}`, {
-        method: 'DELETE',
-      });
+      await postApi.deletePost(id);
       const { posts } = get();
       set({ posts: posts.filter(post => post.id !== id) });
     } catch (error: any) {
@@ -117,8 +103,7 @@ export const usePostsStore = create<PostsState>((set, get) => ({
 
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`/api/posts/search?q=${query}`);
-      const data = await response.json();
+      const data = await postApi.searchPosts(query);
       set({ posts: data.posts, total: data.total, loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
@@ -135,12 +120,11 @@ export const usePostsStore = create<PostsState>((set, get) => ({
 
     set({ loading: true, error: null });
     try {
-      const [postsResponse, usersResponse] = await Promise.all([
-        fetch(`/api/posts/tag/${tag}`),
+      const [postsData, usersResponse] = await Promise.all([
+        postApi.getPostsByTag(tag),
         fetch('/api/users?limit=0&select=username,image'),
       ]);
 
-      const postsData = await postsResponse.json();
       const usersData = await usersResponse.json();
 
       const postsWithUsers = postsData.posts.map((post: Post) => ({
