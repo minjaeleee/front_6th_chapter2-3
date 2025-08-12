@@ -1,29 +1,20 @@
-import { Plus, Search } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { CommentForm } from '../entities/comment';
 import { Post, PostDetail, PostForm, PostTable } from '../entities/post';
 import { UserModal } from '../entities/user';
 import {
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  Input,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../shared';
+  PostsManagerControls,
+  PostsManagerHeader,
+  PostsManagerPagination,
+} from '../features/post-management/ui';
+import { Card, CardContent } from '../shared';
 import { useCommentsStore } from '../stores';
 import { usePostsStore } from '../stores/posts';
 import { useSearchStore } from '../stores/search';
 import { useUIStore } from '../stores/ui';
-import { useUserProfileStore } from '../stores/user-profile';
 
 const PostsManager = () => {
   const navigate = useNavigate();
@@ -68,8 +59,6 @@ const PostsManager = () => {
     setSelectedPost,
     setShowPostDetailDialog,
   } = useUIStore();
-
-  const { openUserProfile } = useUserProfileStore();
 
   // URL 업데이트 함수
   const updateURL = () => {
@@ -117,76 +106,26 @@ const PostsManager = () => {
 
   return (
     <Card className='mx-auto w-full max-w-6xl'>
-      <CardHeader>
-        <CardTitle className='flex items-center justify-between'>
-          <span>게시물 관리자</span>
-          <Button onClick={() => setShowAddDialog(true)}>
-            <Plus className='mr-2 h-4 w-4' />
-            게시물 추가
-          </Button>
-        </CardTitle>
-      </CardHeader>
+      <PostsManagerHeader onAddPost={() => setShowAddDialog(true)} />
       <CardContent>
         <div className='flex flex-col gap-4'>
           {/* 검색 및 필터 컨트롤 */}
-          <div className='flex gap-4'>
-            <div className='flex-1'>
-              <div className='relative'>
-                <Search className='text-muted-foreground absolute left-2 top-2.5 h-4 w-4' />
-                <Input
-                  placeholder='게시물 검색...'
-                  className='pl-8'
-                  value={searchQuery}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSearchQuery(e.target.value)
-                  }
-                  onKeyPress={(e: React.KeyboardEvent) =>
-                    e.key === 'Enter' && searchPosts(searchQuery)
-                  }
-                />
-              </div>
-            </div>
-            <Select
-              value={selectedTag}
-              onValueChange={value => {
-                setSelectedTag(value);
-                fetchPostsByTag(value);
-                updateURL();
-              }}
-            >
-              <SelectTrigger className='w-[180px]'>
-                <SelectValue placeholder='태그 선택' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='all'>모든 태그</SelectItem>
-                {tags.map(tag => (
-                  <SelectItem key={tag.url} value={tag.slug}>
-                    {tag.slug}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className='w-[180px]'>
-                <SelectValue placeholder='정렬 기준' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='none'>없음</SelectItem>
-                <SelectItem value='id'>ID</SelectItem>
-                <SelectItem value='title'>제목</SelectItem>
-                <SelectItem value='reactions'>반응</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={sortOrder} onValueChange={setSortOrder}>
-              <SelectTrigger className='w-[180px]'>
-                <SelectValue placeholder='정렬 순서' />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='asc'>오름차순</SelectItem>
-                <SelectItem value='desc'>내림차순</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <PostsManagerControls
+            searchQuery={searchQuery}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            selectedTag={selectedTag}
+            tags={tags}
+            onSearchChange={setSearchQuery}
+            onSortByChange={setSortBy}
+            onSortOrderChange={setSortOrder}
+            onTagChange={(tag: string) => {
+              setSelectedTag(tag);
+              fetchPostsByTag(tag);
+              updateURL();
+            }}
+            onSearch={searchPosts}
+          />
 
           {/* 게시물 테이블 */}
           {loading ? (
@@ -196,39 +135,13 @@ const PostsManager = () => {
           )}
 
           {/* 페이지네이션 */}
-          <div className='flex items-center justify-between'>
-            <div className='flex items-center gap-2'>
-              <span>표시</span>
-              <Select
-                value={limit.toString()}
-                onValueChange={value => setLimit(Number(value))}
-              >
-                <SelectTrigger className='w-[180px]'>
-                  <SelectValue placeholder='10' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='10'>10</SelectItem>
-                  <SelectItem value='20'>20</SelectItem>
-                  <SelectItem value='30'>30</SelectItem>
-                </SelectContent>
-              </Select>
-              <span>항목</span>
-            </div>
-            <div className='flex gap-2'>
-              <Button
-                disabled={skip === 0}
-                onClick={() => setSkip(Math.max(0, skip - limit))}
-              >
-                이전
-              </Button>
-              <Button
-                disabled={skip + limit >= total}
-                onClick={() => setSkip(skip + limit)}
-              >
-                다음
-              </Button>
-            </div>
-          </div>
+          <PostsManagerPagination
+            limit={limit}
+            skip={skip}
+            total={total}
+            onLimitChange={setLimit}
+            onSkipChange={setSkip}
+          />
         </div>
       </CardContent>
 
