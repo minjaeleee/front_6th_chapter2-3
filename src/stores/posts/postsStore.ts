@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import { CreatePost, Post, UpdatePost, postApi } from '../../entities/post';
+import { userApi } from '../../entities/user';
 
 interface PostsState {
   posts: Post[];
@@ -42,10 +43,8 @@ export const usePostsStore = create<PostsState>((set, get) => ({
       const postsResponse = await postApi.getPosts(limit, skip);
       postsData = postsResponse;
 
-      const usersResponse = await fetch(
-        '/api/users?limit=0&select=username,image'
-      );
-      usersData = await usersResponse.json();
+      const usersResponse = await userApi.getUsersList();
+      usersData = usersResponse;
 
       const postsWithUsers = postsData.posts.map((post: Post) => ({
         ...post,
@@ -120,12 +119,10 @@ export const usePostsStore = create<PostsState>((set, get) => ({
 
     set({ loading: true, error: null });
     try {
-      const [postsData, usersResponse] = await Promise.all([
+      const [postsData, usersData] = await Promise.all([
         postApi.getPostsByTag(tag),
-        fetch('/api/users?limit=0&select=username,image'),
+        userApi.getUsersList(),
       ]);
-
-      const usersData = await usersResponse.json();
 
       const postsWithUsers = postsData.posts.map((post: Post) => ({
         ...post,

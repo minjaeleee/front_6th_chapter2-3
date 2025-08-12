@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { User } from '../../entities/user';
+import { User, userApi } from '../../entities/user';
 
 interface UsersState {
   selectedUser: User | null;
@@ -22,8 +22,7 @@ export const useUsersStore = create<UsersState>(set => ({
   fetchUser: async (id: number) => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`/api/users/${id}`);
-      const userData = await response.json();
+      const userData = await userApi.getUser(id);
       set({ selectedUser: userData, loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });

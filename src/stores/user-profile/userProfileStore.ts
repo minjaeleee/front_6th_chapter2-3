@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
+import { userApi } from '../../entities/user';
 import { UserProfileData } from '../../features/user-profile/model';
-import { usersApi } from '../../shared/api';
 
 interface UserProfileState {
   selectedUser: UserProfileData | null;
@@ -24,9 +24,9 @@ export const useUserProfileStore = create<UserProfileState>(set => ({
     set({ loading: true, error: null });
     try {
       // 사용자 상세 정보를 가져옵니다 (필요한 경우)
-      const userData = await usersApi.getUser(user.id);
+      const userData = await userApi.getUser(user.id);
       set({
-        selectedUser: userData.data,
+        selectedUser: userData,
         loading: false,
         showUserModal: true,
       });
