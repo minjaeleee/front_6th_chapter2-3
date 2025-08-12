@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 
-import { Comment, CreateComment, UpdateComment } from '../../entities/comment';
+import {
+  Comment,
+  CreateComment,
+  UpdateComment,
+  commentApi,
+} from '../../entities/comment';
 
 interface CommentsState {
   comments: Record<number, Comment[]>;
@@ -27,8 +32,7 @@ export const useCommentsStore = create<CommentsState>((set, get) => ({
 
     set({ loading: true, error: null });
     try {
-      const response = await fetch(`/api/comments/post/${postId}`);
-      const data = await response.json();
+      const data = await commentApi.getCommentsByPost(postId);
       set(prev => ({
         comments: { ...prev.comments, [postId]: data.comments },
         loading: false,
@@ -41,12 +45,7 @@ export const useCommentsStore = create<CommentsState>((set, get) => ({
 
   addComment: async (comment: CreateComment) => {
     try {
-      const response = await fetch('/api/comments/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(comment),
-      });
-      const data = await response.json();
+      const data = await commentApi.addComment(comment);
       set(prev => ({
         comments: {
           ...prev.comments,
@@ -61,12 +60,7 @@ export const useCommentsStore = create<CommentsState>((set, get) => ({
 
   updateComment: async (id: number, comment: UpdateComment) => {
     try {
-      const response = await fetch(`/api/comments/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ body: comment.body }),
-      });
-      const data = await response.json();
+      const data = await commentApi.updateComment(id, comment);
       set(prev => ({
         comments: {
           ...prev.comments,
@@ -77,15 +71,13 @@ export const useCommentsStore = create<CommentsState>((set, get) => ({
       }));
     } catch (error: any) {
       set({ error: error.message });
-      console.error('댓글 업데이트 오류:', error);
+      console.error('댓글 수정 오류:', error);
     }
   },
 
   deleteComment: async (id: number, postId: number) => {
     try {
-      await fetch(`/api/comments/${id}`, {
-        method: 'DELETE',
-      });
+      await commentApi.deleteComment(id);
       set(prev => ({
         comments: {
           ...prev.comments,
@@ -104,14 +96,7 @@ export const useCommentsStore = create<CommentsState>((set, get) => ({
       const comment = currentComments.find(c => c.id === id);
       if (!comment) return;
 
-      const response = await fetch(`/api/comments/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          likes: comment.likes + 1,
-        }),
-      });
-      const data = await response.json();
+      const data = await commentApi.likeComment(id);
       set(prev => ({
         comments: {
           ...prev.comments,
