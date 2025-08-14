@@ -4,30 +4,42 @@ import React from 'react';
 
 import { highlightText } from '../../../shared/lib';
 import { Button } from '../../../shared/ui';
-import { useCommentsStore, useSearchStore, useUIStore } from '../../../stores';
+import { useSearchStore } from '../../../stores';
 import { Comment } from '../model';
 
 interface CommentItemProps {
   comment: Comment;
   postId: number;
+  onEdit?: (comment: Comment) => void;
+  onDelete?: (commentId: number, postId: number) => void;
+  onLike?: (commentId: number, postId: number) => void;
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ comment, postId }) => {
-  const { likeComment, deleteComment } = useCommentsStore();
-  const { setSelectedComment, setShowEditCommentDialog } = useUIStore();
+const CommentItem: React.FC<CommentItemProps> = ({ 
+  comment, 
+  postId,
+  onEdit,
+  onDelete,
+  onLike 
+}) => {
   const { searchQuery } = useSearchStore();
 
   const handleEdit = () => {
-    setSelectedComment(comment);
-    setShowEditCommentDialog(true);
+    if (onEdit) {
+      onEdit(comment);
+    }
   };
 
   const handleDelete = () => {
-    deleteComment(comment.id, postId);
+    if (onDelete) {
+      onDelete(comment.id, postId);
+    }
   };
 
   const handleLike = () => {
-    likeComment(comment.id, postId);
+    if (onLike) {
+      onLike(comment.id, postId);
+    }
   };
 
   return (

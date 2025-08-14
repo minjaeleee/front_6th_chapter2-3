@@ -2,9 +2,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useEffect } from 'react';
 
-import { CommentForm } from '../entities/comment';
 import { Post, PostDetail, PostForm, PostTable } from '../entities/post';
 import { UserModal } from '../entities/user';
+import { CommentForm } from '../features/comment-management';
 import { usePostDialogs } from '../features/post-crud';
 import { PostHeader } from '../features/post-crud/ui';
 import { usePostFilter } from '../features/post-filter';
@@ -14,14 +14,12 @@ import { PostPagination } from '../features/post-list/ui';
 import { usePostSearch } from '../features/post-search';
 import { SearchBar } from '../features/post-search/ui';
 import { Card, CardContent } from '../shared';
-import { useCommentsStore } from '../stores';
 import { useUIStore } from '../stores/ui';
 
 const PostsManager = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { fetchComments } = useCommentsStore();
 
   const { total, loading, skip, limit, fetchPosts, setSkip, setLimit } =
     usePostList();
@@ -50,10 +48,6 @@ const PostsManager = () => {
   } = usePostFilter();
 
   const {
-    showAddCommentDialog,
-    showEditCommentDialog,
-    setShowAddCommentDialog,
-    setShowEditCommentDialog,
     setShowPostDetailDialog,
   } = useUIStore();
 
@@ -72,7 +66,6 @@ const PostsManager = () => {
   // 게시물 상세 보기
   const handleOpenPostDetail = (post: Post) => {
     openEditDialog(post); // selectedPost 설정도 함께
-    fetchComments(post.id);
     setShowPostDetailDialog(true);
   };
 
@@ -159,20 +152,10 @@ const PostsManager = () => {
       />
 
       {/* 댓글 추가 대화상자 */}
-      <CommentForm
-        isOpen={showAddCommentDialog}
-        onOpenChange={setShowAddCommentDialog}
-        title='새 댓글 추가'
-        submitText='댓글 추가'
-      />
+      <CommentForm mode='add' />
 
       {/* 댓글 수정 대화상자 */}
-      <CommentForm
-        isOpen={showEditCommentDialog}
-        onOpenChange={setShowEditCommentDialog}
-        title='댓글 수정'
-        submitText='댓글 업데이트'
-      />
+      <CommentForm mode='edit' />
 
       {/* 게시물 상세 보기 */}
       <PostDetail />

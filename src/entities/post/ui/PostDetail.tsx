@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from '../../../shared/ui';
 import { useSearchStore, useUIStore } from '../../../stores';
-import { CommentList } from '../../comment';
+import { CommentManager } from '../../../features/comment-management';
 
 const PostDetail: React.FC = () => {
   const { showPostDetailDialog, setShowPostDetailDialog, selectedPost } =
@@ -25,7 +25,7 @@ const PostDetail: React.FC = () => {
         </DialogHeader>
         <div className='space-y-4'>
           <p>{highlightText(selectedPost?.body || '', searchQuery)}</p>
-          {selectedPost && <CommentList />}
+          {selectedPost && <CommentManager postId={selectedPost.id} />}
         </div>
       </DialogContent>
     </Dialog>
