@@ -1,0 +1,1 @@
+export { usePostCrud, usePostDialogs } from './model';

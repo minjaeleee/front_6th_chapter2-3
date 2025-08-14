@@ -1,15 +1,14 @@
 import { create } from 'zustand';
 
-import { userApi } from '../../entities/user';
-import { UserProfileData } from '../../features/user-profile/model';
+import { userApi, User } from '../../entities/user';
 
 interface UserProfileState {
-  selectedUser: UserProfileData | null;
+  selectedUser: User | null;
   loading: boolean;
   error: string | null;
   showUserModal: boolean;
 
-  openUserProfile: (user: UserProfileData) => Promise<void>;
+  openUserProfile: (user: User) => Promise<void>;
   closeUserProfile: () => void;
   setShowUserModal: (show: boolean) => void;
 }
@@ -20,7 +19,7 @@ export const useUserProfileStore = create<UserProfileState>(set => ({
   error: null,
   showUserModal: false,
 
-  openUserProfile: async (user: UserProfileData) => {
+  openUserProfile: async (user: User) => {
     set({ loading: true, error: null });
     try {
       // 사용자 상세 정보를 가져옵니다 (필요한 경우)

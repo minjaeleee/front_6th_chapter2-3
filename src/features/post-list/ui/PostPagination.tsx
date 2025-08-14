@@ -9,7 +9,7 @@ import {
   SelectValue,
 } from '../../../shared/ui';
 
-interface PostsManagerPaginationProps {
+interface PostPaginationProps {
   limit: number;
   skip: number;
   total: number;
@@ -17,7 +17,7 @@ interface PostsManagerPaginationProps {
   onSkipChange: (skip: number) => void;
 }
 
-const PostsManagerPagination: React.FC<PostsManagerPaginationProps> = ({
+const PostPagination: React.FC<PostPaginationProps> = ({
   limit,
   skip,
   total,
@@ -61,4 +61,4 @@ const PostsManagerPagination: React.FC<PostsManagerPaginationProps> = ({
   );
 };
 
-export default PostsManagerPagination;
+export default PostPagination;

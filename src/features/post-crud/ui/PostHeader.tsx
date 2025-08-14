@@ -4,13 +4,11 @@ import React from 'react';
 
 import { Button, CardHeader, CardTitle } from '../../../shared/ui';
 
-interface PostsManagerHeaderProps {
+interface PostHeaderProps {
   onAddPost: () => void;
 }
 
-const PostsManagerHeader: React.FC<PostsManagerHeaderProps> = ({
-  onAddPost,
-}) => {
+const PostHeader: React.FC<PostHeaderProps> = ({ onAddPost }) => {
   return (
     <CardHeader>
       <CardTitle className='flex items-center justify-between'>
@@ -24,4 +22,4 @@ const PostsManagerHeader: React.FC<PostsManagerHeaderProps> = ({
   );
 };
 
-export default PostsManagerHeader;
+export default PostHeader;

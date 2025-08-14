@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useAddPost } from '../../../features/add-post';
+import { usePostCrud, usePostDialogs } from '../../../features/post-crud';
 import {
   Button,
   Dialog,
@@ -10,7 +10,7 @@ import {
   Input,
   Textarea,
 } from '../../../shared/ui';
-import { usePostsStore, useUIStore } from '../../../stores';
+import { useUIStore } from '../../../stores';
 import { UpdatePost } from '../model';
 
 interface PostFormProps {
@@ -20,15 +20,15 @@ interface PostFormProps {
 }
 
 const PostForm: React.FC<PostFormProps> = ({ isOpen, onOpenChange, mode }) => {
-  const { addPost: addPostFeature } = useAddPost();
+  // Features 사용
+  const { addPost, updatePost } = usePostCrud();
+  const { selectedPost, setSelectedPost } = usePostDialogs();
 
-  const { newPost, selectedPost, setNewPost, setSelectedPost, resetNewPost } =
-    useUIStore();
-  const { updatePost } = usePostsStore();
+  const { newPost, setNewPost, resetNewPost } = useUIStore();
 
   const handleSubmit = async () => {
     if (mode === 'add') {
-      await addPostFeature(newPost);
+      await addPost(newPost);
       onOpenChange(false);
       resetNewPost();
     } else if (mode === 'edit' && selectedPost) {

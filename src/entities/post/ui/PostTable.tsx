@@ -8,6 +8,10 @@ import {
 
 import React from 'react';
 
+import { usePostCrud, usePostDialogs } from '../../../features/post-crud';
+import { usePostFilter } from '../../../features/post-filter';
+import { usePostList } from '../../../features/post-list';
+import { usePostSearch } from '../../../features/post-search';
 import { highlightText } from '../../../shared/lib';
 import {
   Button,
@@ -18,7 +22,6 @@ import {
   TableHeader,
   TableRow,
 } from '../../../shared/ui';
-import { usePostsStore, useSearchStore, useUIStore } from '../../../stores';
 import { UserAvatar } from '../../user';
 import { Post } from '../model';
 
@@ -27,13 +30,15 @@ interface PostTableProps {
 }
 
 const PostTable: React.FC<PostTableProps> = ({ onOpenPostDetail }) => {
-  const { posts, deletePost } = usePostsStore();
-  const { setSelectedPost, setShowEditDialog } = useUIStore();
-  const { searchQuery, selectedTag, setSelectedTag } = useSearchStore();
+  // Features 사용
+  const { posts } = usePostList();
+  const { deletePost } = usePostCrud();
+  const { openEditDialog } = usePostDialogs();
+  const { searchQuery } = usePostSearch();
+  const { selectedTag, setSelectedTag } = usePostFilter();
 
   const handleEditPost = (post: Post) => {
-    setSelectedPost(post);
-    setShowEditDialog(true);
+    openEditDialog(post);
   };
 
   const handleTagClick = (tag: string) => {

@@ -1,9 +1,6 @@
-import { Search } from 'lucide-react';
-
 import React from 'react';
 
 import {
-  Input,
   Select,
   SelectContent,
   SelectItem,
@@ -11,53 +8,27 @@ import {
   SelectValue,
 } from '../../../shared/ui';
 
-interface PostsManagerControlsProps {
-  searchQuery: string;
+interface FilterControlsProps {
   sortBy: string;
   sortOrder: string;
   selectedTag: string;
   tags: any[];
-  onSearchChange: (query: string) => void;
   onSortByChange: (sortBy: string) => void;
   onSortOrderChange: (sortOrder: string) => void;
   onTagChange: (tag: string) => void;
-  onSearch: (query: string) => void;
 }
 
-const PostsManagerControls: React.FC<PostsManagerControlsProps> = ({
-  searchQuery,
+const FilterControls: React.FC<FilterControlsProps> = ({
   sortBy,
   sortOrder,
   selectedTag,
   tags,
-  onSearchChange,
   onSortByChange,
   onSortOrderChange,
   onTagChange,
-  onSearch,
 }) => {
-  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      onSearch(searchQuery);
-    }
-  };
-
   return (
     <div className='flex gap-4'>
-      <div className='flex-1'>
-        <div className='relative'>
-          <Search className='text-muted-foreground absolute left-2 top-2.5 h-4 w-4' />
-          <Input
-            placeholder='게시물 검색...'
-            className='pl-8'
-            value={searchQuery}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              onSearchChange(e.target.value)
-            }
-            onKeyPress={handleSearchKeyPress}
-          />
-        </div>
-      </div>
       <Select value={selectedTag} onValueChange={onTagChange}>
         <SelectTrigger className='w-[180px]'>
           <SelectValue placeholder='태그 선택' />
@@ -95,4 +66,4 @@ const PostsManagerControls: React.FC<PostsManagerControlsProps> = ({
   );
 };
 
-export default PostsManagerControls;
+export default FilterControls;
