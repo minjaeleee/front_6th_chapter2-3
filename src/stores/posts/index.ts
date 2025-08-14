@@ -1,1 +1,0 @@
-export { usePostsStore } from './postsStore';
