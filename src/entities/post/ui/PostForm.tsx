@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { useAddPost } from '../../../features/add-post';
 import {
   Button,
   Dialog,
@@ -19,13 +20,15 @@ interface PostFormProps {
 }
 
 const PostForm: React.FC<PostFormProps> = ({ isOpen, onOpenChange, mode }) => {
+  const { addPost: addPostFeature } = useAddPost();
+
   const { newPost, selectedPost, setNewPost, setSelectedPost, resetNewPost } =
     useUIStore();
-  const { addPost, updatePost } = usePostsStore();
+  const { updatePost } = usePostsStore();
 
   const handleSubmit = async () => {
     if (mode === 'add') {
-      await addPost(newPost);
+      await addPostFeature(newPost);
       onOpenChange(false);
       resetNewPost();
     } else if (mode === 'edit' && selectedPost) {

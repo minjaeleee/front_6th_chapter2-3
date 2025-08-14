@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { CreatePost, Post, UpdatePost, postApi } from '../../entities/post';
+import { Post, UpdatePost, postApi } from '../../entities/post';
 import { userApi } from '../../entities/user';
 
 interface PostsState {
@@ -13,7 +13,6 @@ interface PostsState {
 
   // Actions
   fetchPosts: (skip: number, limit: number) => Promise<void>;
-  addPost: (post: CreatePost) => Promise<void>;
   updatePost: (id: number, post: UpdatePost) => Promise<void>;
   deletePost: (id: number) => Promise<void>;
   searchPosts: (query: string) => Promise<void>;
@@ -55,17 +54,6 @@ export const usePostsStore = create<PostsState>((set, get) => ({
     } catch (error: any) {
       set({ error: error.message, loading: false });
       console.error('게시물 가져오기 오류:', error);
-    }
-  },
-
-  addPost: async (post: CreatePost) => {
-    try {
-      const data = await postApi.addPost(post);
-      const { posts } = get();
-      set({ posts: [data, ...posts] });
-    } catch (error: any) {
-      set({ error: error.message });
-      console.error('게시물 추가 오류:', error);
     }
   },
 
