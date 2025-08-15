@@ -2,19 +2,20 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useEffect } from 'react';
 
-import { Post, PostDetail, PostForm, PostTable } from '../entities/post';
-import { UserModal } from '../entities/user';
-import { CommentForm } from '../features/comment-management';
+import { CommentFormManager } from '../features/comment-management';
+import { PostDetailManager } from '../features/post-detail';
+import { PostFormManager } from '../features/post-crud/ui';
+import { UserModalManager } from '../features/user-profile';
 import { usePostDialogs } from '../features/post-crud';
 import { PostHeader } from '../features/post-crud/ui';
 import { usePostFilter } from '../features/post-filter';
 import { FilterControls } from '../features/post-filter/ui';
 import { usePostList } from '../features/post-list';
-import { PostPagination } from '../features/post-list/ui';
+import { PostPagination, PostTableManager } from '../features/post-list/ui';
 import { usePostSearch } from '../features/post-search';
 import { SearchBar } from '../features/post-search/ui';
 import { Card, CardContent } from '../shared';
-import { useUIStore } from '../stores/ui';
+import { usePostDetail } from '../features/post-detail';
 
 const PostsManager = () => {
   const navigate = useNavigate();
@@ -48,9 +49,8 @@ const PostsManager = () => {
   } = usePostFilter();
 
   const {
-    setShowPostDetailDialog,
-    setSelectedPost,
-  } = useUIStore();
+    openPostDetail,
+  } = usePostDetail();
 
   // URL 업데이트 함수
   const updateURL = () => {
@@ -66,8 +66,7 @@ const PostsManager = () => {
 
   // 게시물 상세 보기
   const handleOpenPostDetail = (post: Post) => {
-    setSelectedPost(post);
-    setShowPostDetailDialog(true);
+    openPostDetail(post);
   };
 
   useEffect(() => {
@@ -126,7 +125,7 @@ const PostsManager = () => {
           {loading ? (
             <div className='flex justify-center p-4'>로딩 중...</div>
           ) : (
-            <PostTable onOpenPostDetail={handleOpenPostDetail} />
+            <PostTableManager onOpenPostDetail={handleOpenPostDetail} />
           )}
 
           {/* 페이지네이션 */}
@@ -141,7 +140,7 @@ const PostsManager = () => {
       </CardContent>
 
       {/* 게시물 추가/수정 폼 */}
-      <PostForm
+      <PostFormManager
         isOpen={showAddDialog || showEditDialog}
         onOpenChange={open => {
           if (!open) {
@@ -153,16 +152,16 @@ const PostsManager = () => {
       />
 
       {/* 댓글 추가 대화상자 */}
-      <CommentForm mode='add' />
+      <CommentFormManager mode='add' />
 
       {/* 댓글 수정 대화상자 */}
-      <CommentForm mode='edit' />
+      <CommentFormManager mode='edit' />
 
       {/* 게시물 상세 보기 */}
-      <PostDetail />
+      <PostDetailManager />
 
       {/* 사용자 모달 */}
-      <UserModal />
+      <UserModalManager />
     </Card>
   );
 };
