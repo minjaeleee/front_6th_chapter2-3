@@ -8,10 +8,6 @@ import {
 
 import React from 'react';
 
-import { usePostCrud, usePostDialogs } from '../../../features/post-crud';
-import { usePostFilter } from '../../../features/post-filter';
-import { usePostList } from '../../../features/post-list';
-import { usePostSearch } from '../../../features/post-search';
 import { highlightText } from '../../../shared/lib';
 import {
   Button,
@@ -22,29 +18,30 @@ import {
   TableHeader,
   TableRow,
 } from '../../../shared/ui';
-import { UserAvatar } from '../../user';
 import { Post } from '../model';
 
 interface PostTableProps {
+  posts: Post[];
+  searchQuery?: string;
+  selectedTag?: string;
   onOpenPostDetail: (post: Post) => void;
+  onEditPost: (post: Post) => void;
+  onDeletePost: (id: number) => void;
+  onTagClick: (tag: string) => void;
+  renderUserAvatar: (user: any) => React.ReactNode;
 }
 
-const PostTable: React.FC<PostTableProps> = ({ onOpenPostDetail }) => {
-  // Features 사용
-  const { posts } = usePostList();
-  const { deletePost } = usePostCrud();
-  const { openEditDialog } = usePostDialogs();
-  const { searchQuery } = usePostSearch();
-  const { selectedTag, setSelectedTag } = usePostFilter();
-
-  const handleEditPost = (post: Post) => {
-    openEditDialog(post);
-  };
-
-  const handleTagClick = (tag: string) => {
-    setSelectedTag(tag);
-  };
-
+const PostTable: React.FC<PostTableProps> = ({
+  posts,
+  searchQuery = '',
+  selectedTag = '',
+  onOpenPostDetail,
+  onEditPost,
+  onDeletePost,
+  onTagClick,
+  renderUserAvatar,
+}) => {
+  console.log('posts', posts);
   return (
     <Table>
       <TableHeader>
@@ -72,7 +69,7 @@ const PostTable: React.FC<PostTableProps> = ({ onOpenPostDetail }) => {
                           ? 'bg-blue-500 text-white hover:bg-blue-600'
                           : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
                       }`}
-                      onClick={() => handleTagClick(tag)}
+                      onClick={() => onTagClick(tag)}
                     >
                       {tag}
                     </span>
@@ -81,7 +78,7 @@ const PostTable: React.FC<PostTableProps> = ({ onOpenPostDetail }) => {
               </div>
             </TableCell>
             <TableCell>
-              {post.author && <UserAvatar user={post.author} size='md' />}
+              {post.author && renderUserAvatar(post.author)}
             </TableCell>
             <TableCell>
               <div className='flex items-center gap-2'>
@@ -103,14 +100,14 @@ const PostTable: React.FC<PostTableProps> = ({ onOpenPostDetail }) => {
                 <Button
                   variant='ghost'
                   size='sm'
-                  onClick={() => handleEditPost(post)}
+                  onClick={() => onEditPost(post)}
                 >
                   <Edit2 className='h-4 w-4' />
                 </Button>
                 <Button
                   variant='ghost'
                   size='sm'
-                  onClick={() => deletePost(post.id)}
+                  onClick={() => onDeletePost(post.id)}
                 >
                   <Trash2 className='h-4 w-4' />
                 </Button>

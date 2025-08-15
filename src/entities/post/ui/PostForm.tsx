@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { usePostCrud, usePostDialogs } from '../../../features/post-crud';
 import {
   Button,
   Dialog,
@@ -10,78 +9,53 @@ import {
   Input,
   Textarea,
 } from '../../../shared/ui';
-import { useUIStore } from '../../../stores';
 import { UpdatePost } from '../model';
 
 interface PostFormProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   mode: 'add' | 'edit';
+  title: string;
+  body: string;
+  userId?: number;
+  onTitleChange: (value: string) => void;
+  onBodyChange: (value: string) => void;
+  onUserIdChange?: (value: string) => void;
+  onSubmit: () => Promise<void>;
 }
 
-const PostForm: React.FC<PostFormProps> = ({ isOpen, onOpenChange, mode }) => {
-  // Features 사용
-  const { addPost, updatePost } = usePostCrud();
-  const { selectedPost, setSelectedPost } = usePostDialogs();
-
-  const { newPost, setNewPost, resetNewPost } = useUIStore();
-
+const PostForm: React.FC<PostFormProps> = ({
+  isOpen,
+  onOpenChange,
+  mode,
+  title: currentTitle,
+  body: currentBody,
+  userId: currentUserId,
+  onTitleChange,
+  onBodyChange,
+  onUserIdChange,
+  onSubmit,
+}) => {
   const handleSubmit = async () => {
-    if (mode === 'add') {
-      await addPost(newPost);
-      onOpenChange(false);
-      resetNewPost();
-    } else if (mode === 'edit' && selectedPost) {
-      const updateData: UpdatePost = {
-        title: selectedPost.title,
-        body: selectedPost.body,
-      };
-      await updatePost(selectedPost.id, updateData);
-      onOpenChange(false);
-    }
+    await onSubmit();
+    onOpenChange(false);
   };
 
-  const handleTitleChange = (value: string) => {
-    if (mode === 'add') {
-      setNewPost({ ...newPost, title: value });
-    } else if (mode === 'edit' && selectedPost) {
-      setSelectedPost({ ...selectedPost, title: value });
-    }
-  };
-
-  const handleBodyChange = (value: string) => {
-    if (mode === 'add') {
-      setNewPost({ ...newPost, body: value });
-    } else if (mode === 'edit' && selectedPost) {
-      setSelectedPost({ ...selectedPost, body: value });
-    }
-  };
-
-  const handleUserIdChange = (value: string) => {
-    if (mode === 'add') {
-      setNewPost({ ...newPost, userId: Number(value) });
-    }
-  };
-
-  const currentTitle =
-    mode === 'add' ? newPost.title : selectedPost?.title || '';
-  const currentBody = mode === 'add' ? newPost.body : selectedPost?.body || '';
-  const currentUserId = mode === 'add' ? newPost.userId : undefined;
   const submitText = mode === 'add' ? '게시물 추가' : '게시물 업데이트';
-  const title = mode === 'add' ? '새 게시물 추가' : '게시물 수정';
+  const dialogTitle = mode === 'add' ? '새 게시물 추가' : '게시물 수정';
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{dialogTitle}</DialogTitle>
         </DialogHeader>
         <div className='space-y-4'>
           <Input
             placeholder='제목'
             value={currentTitle}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              handleTitleChange(e.target.value)
+              onTitleChange(e.target.value)
             }
           />
           <Textarea
@@ -89,16 +63,16 @@ const PostForm: React.FC<PostFormProps> = ({ isOpen, onOpenChange, mode }) => {
             placeholder='내용'
             value={currentBody}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              handleBodyChange(e.target.value)
+              onBodyChange(e.target.value)
             }
           />
-          {mode === 'add' && (
+          {mode === 'add' && onUserIdChange && (
             <Input
               type='number'
               placeholder='사용자 ID'
               value={currentUserId}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleUserIdChange(e.target.value)
+                onUserIdChange(e.target.value)
               }
             />
           )}

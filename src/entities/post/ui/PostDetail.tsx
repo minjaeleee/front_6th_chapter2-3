@@ -7,25 +7,34 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../../shared/ui';
-import { useSearchStore, useUIStore } from '../../../stores';
-import { CommentManager } from '../../../features/comment-management';
+import { Post } from '../model';
 
-const PostDetail: React.FC = () => {
-  const { showPostDetailDialog, setShowPostDetailDialog, selectedPost } =
-    useUIStore();
-  const { searchQuery } = useSearchStore();
+interface PostDetailProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  post: Post | null;
+  searchQuery?: string;
+  children?: React.ReactNode;
+}
 
+const PostDetail: React.FC<PostDetailProps> = ({
+  isOpen,
+  onOpenChange,
+  post,
+  searchQuery = '',
+  children,
+}) => {
   return (
-    <Dialog open={showPostDetailDialog} onOpenChange={setShowPostDetailDialog}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className='max-w-3xl'>
         <DialogHeader>
           <DialogTitle>
-            {highlightText(selectedPost?.title || '', searchQuery)}
+            {highlightText(post?.title || '', searchQuery)}
           </DialogTitle>
         </DialogHeader>
         <div className='space-y-4'>
-          <p>{highlightText(selectedPost?.body || '', searchQuery)}</p>
-          {selectedPost && <CommentManager postId={selectedPost.id} />}
+          <p>{highlightText(post?.body || '', searchQuery)}</p>
+          {children}
         </div>
       </DialogContent>
     </Dialog>
