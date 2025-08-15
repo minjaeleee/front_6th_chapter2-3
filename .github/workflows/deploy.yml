@@ -36,18 +36,18 @@ jobs:
         with:
           fetch-depth: 0 # 전체 히스토리 가져오기
 
-      # 2. Node.js 설정
+      # 2. pnpm 설치 (Node.js 설정 전에 먼저 설치)
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      # 3. Node.js 설정
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.14.0'
           cache: 'pnpm'
-
-      # 3. pnpm 설치
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
 
       # 4. 의존성 설치
       - name: Install dependencies
