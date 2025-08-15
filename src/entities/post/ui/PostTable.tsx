@@ -41,7 +41,6 @@ const PostTable: React.FC<PostTableProps> = ({
   onTagClick,
   renderUserAvatar,
 }) => {
-  console.log('posts', posts);
   return (
     <Table>
       <TableHeader>

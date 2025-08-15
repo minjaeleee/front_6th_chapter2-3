@@ -21,6 +21,7 @@ const PostTableManager: React.FC<PostTableManagerProps> = ({
   const { selectedTag, setSelectedTag } = usePostFilter();
 
   const handleEditPost = (post: Post) => {
+    console.log('handleEditPost called with:', post);
     openEditDialog(post);
   };
 

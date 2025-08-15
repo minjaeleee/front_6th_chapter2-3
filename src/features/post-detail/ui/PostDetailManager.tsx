@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { PostDetail } from '../../../entities/post';
-import { CommentManager } from '../../comment-management';
+import { CommentWidget } from '../../../widgets/comment-management';
 import { usePostSearch } from '../../post-search';
 import { usePostDetail } from '../model';
 
@@ -21,7 +21,7 @@ const PostDetailManager: React.FC = () => {
       post={selectedPost}
       searchQuery={searchQuery}
     >
-      {selectedPost && <CommentManager postId={selectedPost.id} />}
+      {selectedPost && <CommentWidget postId={selectedPost.id} />}
     </PostDetail>
   );
 };
