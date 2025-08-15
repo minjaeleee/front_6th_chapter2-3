@@ -40,7 +40,8 @@ export const usePostFilter = create<PostFilterState & PostFilterActions>()((set)
   fetchTags: async () => {
     set({ loading: true, error: null });
     try {
-      const response = await fetch('/api/posts/tags');
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const response = await fetch(`${API_BASE_URL}/posts/tags`);
       const data = await response.json();
       set({ tags: data, loading: false });
     } catch (error: any) {
