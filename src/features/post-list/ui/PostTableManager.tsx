@@ -14,7 +14,7 @@ interface PostTableManagerProps {
 const PostTableManager: React.FC<PostTableManagerProps> = ({
   onOpenPostDetail,
 }) => {
-  const { posts } = usePostList();
+  const { posts, removePostFromList } = usePostList();
   const { deletePost } = usePostCrud();
   const { openEditDialog } = usePostDialogs();
   const { searchQuery } = usePostSearch();
@@ -27,7 +27,12 @@ const PostTableManager: React.FC<PostTableManagerProps> = ({
 
   const handleDeletePost = async (id: number) => {
     if (window.confirm('이 게시물을 삭제하시겠습니까?')) {
-      await deletePost(id);
+      try {
+        await deletePost(id);
+        removePostFromList(id);
+      } catch (error) {
+        console.error('삭제 오류:', error);
+      }
     }
   };
 

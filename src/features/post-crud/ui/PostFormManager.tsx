@@ -2,6 +2,8 @@ import React from 'react';
 
 import { PostForm } from '../../../entities/post';
 import { usePostCrud, usePostDialogs, usePostForm } from '../model';
+import { usePostList } from '../../post-list';
+import { userApi } from '../../../entities/user';
 
 interface PostFormManagerProps {
   isOpen: boolean;
@@ -17,16 +19,36 @@ const PostFormManager: React.FC<PostFormManagerProps> = ({
   const { addPost, updatePost } = usePostCrud();
   const { selectedPost, setSelectedPost } = usePostDialogs();
   const { newPost, setNewPost, resetNewPost } = usePostForm();
+  const { addPostToList, updatePostInList } = usePostList();
 
   const handleSubmit = async () => {
-    if (mode === 'add') {
-      await addPost(newPost);
-      resetNewPost();
-    } else if (mode === 'edit' && selectedPost) {
-      await updatePost(selectedPost.id, {
-        title: selectedPost.title,
-        body: selectedPost.body,
-      });
+    try {
+      if (mode === 'add') {
+        const newPostResult = await addPost(newPost);
+        
+        // 새 게시물에 author 정보 추가
+        try {
+          const usersResponse = await userApi.getUsersList();
+          const author = usersResponse.users.find((user: any) => user.id === newPostResult.userId);
+          const postWithAuthor = { ...newPostResult, author };
+          addPostToList(postWithAuthor);
+        } catch (error) {
+          // 오류 시 author 없이라도 추가
+          addPostToList({ ...newPostResult, author: null });
+        }
+        
+        resetNewPost();
+        onOpenChange(false);
+      } else if (mode === 'edit' && selectedPost) {
+        const updatedPost = await updatePost(selectedPost.id, {
+          title: selectedPost.title,
+          body: selectedPost.body,
+        });
+        updatePostInList(updatedPost);
+        onOpenChange(false);
+      }
+    } catch (error) {
+      console.error('폼 제출 오류:', error);
     }
   };
 
