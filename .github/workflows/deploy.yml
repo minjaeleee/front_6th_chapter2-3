@@ -51,7 +51,7 @@ jobs:
 
       # 4. 의존성 설치
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       # 5. 타입 체크 및 린트 (선택사항)
       - name: Run type check
