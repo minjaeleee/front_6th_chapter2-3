@@ -1,51 +1,47 @@
-import { create } from 'zustand';
+import { useCommentState } from './useCommentState';
 
-import { Comment } from '../../../entities/comment';
+export const useCommentDialogs = () => {
+  const {
+    showAddCommentDialog,
+    showEditCommentDialog,
+    selectedComment,
+    newComment,
+    setShowAddCommentDialog,
+    setShowEditCommentDialog,
+    setSelectedComment,
+    setNewComment,
+    resetNewComment,
+  } = useCommentState();
 
-interface CommentDialogsState {
-  showAddDialog: boolean;
-  showEditDialog: boolean;
-  selectedComment: Comment | null;
-  postId: number | null;
-}
+  const openAddDialog = (postId: number) => {
+    setNewComment({ body: '', postId, userId: 1 });
+    setShowAddCommentDialog(true);
+  };
 
-interface CommentDialogsActions {
-  openAddDialog: (postId: number) => void;
-  closeAddDialog: () => void;
-  openEditDialog: (comment: Comment, postId: number) => void;
-  closeEditDialog: () => void;
-  setSelectedComment: (comment: Comment | null) => void;
-}
+  const closeAddDialog = () => {
+    setShowAddCommentDialog(false);
+    resetNewComment();
+  };
 
-export const useCommentDialogs = create<CommentDialogsState & CommentDialogsActions>()((set) => ({
-  showAddDialog: false,
-  showEditDialog: false,
-  selectedComment: null,
-  postId: null,
+  const openEditDialog = (comment: any) => {
+    setSelectedComment(comment);
+    setShowEditCommentDialog(true);
+  };
 
-  openAddDialog: (postId: number) => set({ 
-    showAddDialog: true,
-    postId,
-    selectedComment: null 
-  }),
+  const closeEditDialog = () => {
+    setShowEditCommentDialog(false);
+    setSelectedComment(null);
+  };
 
-  closeAddDialog: () => set({ 
-    showAddDialog: false,
-    postId: null,
-    selectedComment: null 
-  }),
-
-  openEditDialog: (comment: Comment, postId: number) => set({ 
-    showEditDialog: true,
-    selectedComment: comment,
-    postId 
-  }),
-
-  closeEditDialog: () => set({ 
-    showEditDialog: false,
-    selectedComment: null,
-    postId: null 
-  }),
-
-  setSelectedComment: (comment: Comment | null) => set({ selectedComment: comment }),
-}));
+  return {
+    showAddCommentDialog,
+    showEditCommentDialog,
+    selectedComment,
+    newComment,
+    openAddDialog,
+    closeAddDialog,
+    openEditDialog,
+    closeEditDialog,
+    setNewComment,
+  };
+};

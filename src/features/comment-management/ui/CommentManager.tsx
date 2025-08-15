@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
-import { CommentItem } from '../../../entities/comment';
-import { Button } from '../../../shared/ui';
+import { CommentList } from '../../../entities/comment';
+import { usePostSearch } from '../../post-search';
 import { useCommentDialogs, useCommentManagement } from '../model';
 
 interface CommentManagerProps {
@@ -18,6 +18,7 @@ const CommentManager: React.FC<CommentManagerProps> = ({ postId }) => {
   } = useCommentManagement();
 
   const { openAddDialog, openEditDialog } = useCommentDialogs();
+  const { searchQuery } = usePostSearch();
 
   const comments = getCommentsForPost(postId);
 
@@ -59,22 +60,15 @@ const CommentManager: React.FC<CommentManagerProps> = ({ postId }) => {
   }
 
   return (
-    <div className='space-y-4'>
-      <div className='flex items-center justify-between'>
-        <h3 className='text-lg font-semibold'>댓글 ({comments.length})</h3>
-        <Button onClick={handleAddComment}>댓글 추가</Button>
-      </div>
-
-      <div className='space-y-2'>
-        {comments.length > 0 ? (
-          comments.map(comment => (
-            <CommentItem key={comment.id} comment={comment} postId={postId} />
-          ))
-        ) : (
-          <div className='py-4 text-center text-gray-500'>댓글이 없습니다.</div>
-        )}
-      </div>
-    </div>
+    <CommentList
+      comments={comments}
+      postId={postId}
+      searchQuery={searchQuery}
+      onAddComment={handleAddComment}
+      onEditComment={handleEditComment}
+      onDeleteComment={handleDeleteComment}
+      onLikeComment={handleLikeComment}
+    />
   );
 };
 
