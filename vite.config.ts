@@ -20,15 +20,12 @@ export default defineConfig({
   },
 
   server: {
-    proxy:
-      process.env.NODE_ENV === 'development'
-        ? {
-            '/api': {
-              target: 'https://dummyjson.com',
-              changeOrigin: true,
-              rewrite: path => path.replace(/^\/api/, ''),
-            },
-          }
-        : {},
+    proxy: {
+      '/api': {
+        target: 'https://dummyjson.com',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, ''),
+      },
+    },
   },
 });
