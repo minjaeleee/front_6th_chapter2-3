@@ -49,6 +49,7 @@ const PostsManager = () => {
 
   const {
     setShowPostDetailDialog,
+    setSelectedPost,
   } = useUIStore();
 
   // URL 업데이트 함수
@@ -65,7 +66,7 @@ const PostsManager = () => {
 
   // 게시물 상세 보기
   const handleOpenPostDetail = (post: Post) => {
-    openEditDialog(post); // selectedPost 설정도 함께
+    setSelectedPost(post);
     setShowPostDetailDialog(true);
   };
 
@@ -141,14 +142,14 @@ const PostsManager = () => {
 
       {/* 게시물 추가/수정 폼 */}
       <PostForm
-        isOpen={showAddDialog}
-        onOpenChange={open => (open ? openAddDialog() : closeAddDialog())}
-        mode='add'
-      />
-      <PostForm
-        isOpen={showEditDialog}
-        onOpenChange={open => (open ? null : closeEditDialog())}
-        mode='edit'
+        isOpen={showAddDialog || showEditDialog}
+        onOpenChange={open => {
+          if (!open) {
+            closeAddDialog();
+            closeEditDialog();
+          }
+        }}
+        mode={showAddDialog ? 'add' : 'edit'}
       />
 
       {/* 댓글 추가 대화상자 */}

@@ -4,12 +4,12 @@ import React from 'react';
 
 import { highlightText } from '../../../shared/lib';
 import { Button } from '../../../shared/ui';
-import { useSearchStore } from '../../../stores';
 import { Comment } from '../model';
 
 interface CommentItemProps {
   comment: Comment;
   postId: number;
+  searchQuery?: string;
   onEdit?: (comment: Comment) => void;
   onDelete?: (commentId: number, postId: number) => void;
   onLike?: (commentId: number, postId: number) => void;
@@ -18,11 +18,11 @@ interface CommentItemProps {
 const CommentItem: React.FC<CommentItemProps> = ({ 
   comment, 
   postId,
+  searchQuery = '',
   onEdit,
   onDelete,
   onLike 
 }) => {
-  const { searchQuery } = useSearchStore();
 
   const handleEdit = () => {
     if (onEdit) {
