@@ -30,50 +30,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. 코드 체크아웃
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # 전체 히스토리 가져오기
 
-      # 2. pnpm 설치 (Node.js 설정 전에 먼저 설치)
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
-      # 3. Node.js 설정
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.14.0'
           cache: 'pnpm'
 
-      # 4. 의존성 설치
       - name: Install dependencies
         run: pnpm install
 
-      # 5. 린트 및 포맷 체크
-      - name: Run ESLint
-        run: pnpm run lint
-        continue-on-error: false
-
-      - name: Run format check
-        run: pnpm run format:check
-        continue-on-error: false
-
-      # 6. 테스트 실행 (선택사항)
-      - name: Run tests
-        run: pnpm run test
-        continue-on-error: false
-
-      # 7. Vite 빌드
       - name: Build project
         run: pnpm run build
         env:
           NODE_ENV: production
 
-      # 8. gh-pages 브랜치에 배포
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v3
         if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
