@@ -53,13 +53,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      # 5. 타입 체크 및 린트 (선택사항)
-      - name: Run type check
-        run: pnpm run type-check
-        continue-on-error: false
-
+      # 5. 린트 및 포맷 체크
       - name: Run ESLint
         run: pnpm run lint
+        continue-on-error: false
+
+      - name: Run format check
+        run: pnpm run format:check
         continue-on-error: false
 
       # 6. 테스트 실행 (선택사항)
