@@ -1,1 +1,1 @@
-export { usePostCrud, usePostDialogs } from './model';
+export { usePostCrud, usePostDialogs, usePostForm } from './model';
